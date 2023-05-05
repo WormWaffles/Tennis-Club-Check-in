@@ -4,3 +4,4 @@ __pycache__
 venv
 needs_attention
 rename_things
+.DS_Store
