@@ -675,7 +675,7 @@ class MemberLookup(tk.Frame):
                         check_in_label = tk.Label(canvas_frame, text="Member, " + info_cut_up[1] + " " + info_cut_up[2] + ", has number: " + info_cut_up[0] + "", font=("Arial", 20))
                         check_in_label.grid(column=0, row=index, padx=25, pady=5)
                         # button for member found
-                        member_info = tk.Button(canvas_frame, text="Check-in", font=("Arial", 20), command=lambda info=info_cut_up[0]: pass_to_lookup(info), width=10, height=1)
+                        member_info = tk.Button(canvas_frame, text="Select", font=("Arial", 20), command=lambda info=info_cut_up[0]: pass_to_lookup(info), width=10, height=1)
                         member_info.grid(column=1, row=index, padx=0, pady=5)
                         if index == 5:
                             canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta)), "units"))
