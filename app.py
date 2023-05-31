@@ -1176,7 +1176,7 @@ class Stats(tk.Frame):
                 except:
                     pass
             else:
-                print(f"running stats " + date)
+                # print(f"running stats " + date)
                 family_count = 0
                 today_count = 0
                 member_count = 0
