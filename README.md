@@ -8,9 +8,6 @@ The Tennis Club Check-in Program is a Python application designed to manage memb
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Screenshots](#screenshots)
-- [Contributing](#contributing)
-- [License](#license)
 
 ## Features
 - Member check-in and check-out functionality.
