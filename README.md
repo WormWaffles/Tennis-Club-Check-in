@@ -30,11 +30,11 @@ Before running the Tennis Club Check-in Program, make sure you have the followin
 1. Clone or download the repository to your local machine.
 
    ```shell
-   git clone https://github.com/yourusername/tennis-club-checkin.git
+   git clone https://github.com/WormWaffles/tennis-club-check-in.git
    ```
 2. Navigate to the project directory.
    ```shell
-   cd tennis-club-checkin
+   cd tennis-club-check-in
    ```
 3. Install the required Python packages using pip.
    ```shell
