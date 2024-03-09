@@ -272,8 +272,8 @@ class MemberLookup(tk.Frame):
                                     reader = csv.reader(file)
                                     for row in reader:
                                         if row == guest:
-                                            num_of_visits = int(guest[7]) + 1
-                                            new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], num_of_visits]
+                                            num_of_visits = int(guest[8]) + 1
+                                            new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
                                             # replace old row with new row
                                             with open('logs/guests/guests.csv', 'r') as file:
                                                 reader = csv.reader(file)
@@ -336,7 +336,7 @@ class MemberLookup(tk.Frame):
                 guest_name = guest_entry.get().split(" ")
                 for guest in guests:
                     if guest[1] == guest_name[0] and guest[2] == guest_name[1]:
-                        guests_num_of_visits = guest[7]
+                        guests_num_of_visits = guest[8]
                         temp_guest = guest
                         guests.pop(guests.index(guest))
                 l = tk.Label(win, text="Guest limit exceeded.\nThis guest, " + guest_entry.get() + ", has\ncome " + str(guests_num_of_visits) + " times.")
@@ -386,10 +386,10 @@ class MemberLookup(tk.Frame):
                             popup_notice("guest_already_logged")
                             return
                         else:
-                            if int(row[7]) >= 5:
+                            if int(row[8]) >= 5:
                                 guests.append(row)
                                 popup_notice("limit_exceeded")
-                            elif int(row[7]) == 4:
+                            elif int(row[8]) == 4:
                                 guests.append(row)
                                 popup_notice("guest_limit_warning")
                             else:
@@ -447,8 +447,8 @@ class MemberLookup(tk.Frame):
                             reader = csv.reader(file)
                             for row in reader:
                                 if row == guest:
-                                    num_of_visits = int(guest[7]) + 1
-                                    new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], num_of_visits]
+                                    num_of_visits = int(guest[8]) + 1
+                                    new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
                                     # replace old row with new row
                                     with open('logs/guests/guests.csv', 'r') as file:
                                         reader = csv.reader(file)
@@ -475,8 +475,8 @@ class MemberLookup(tk.Frame):
                                 reader = csv.reader(file)
                                 for row in reader:
                                     if row == guest:
-                                        num_of_visits = int(guest[7]) + 1
-                                        new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], num_of_visits]
+                                        num_of_visits = int(guest[8]) + 1
+                                        new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
                                         # replace old row with new row
                                         with open('logs/guests/guests.csv', 'r') as file:
                                             reader = csv.reader(file)
@@ -537,7 +537,8 @@ class MemberLookup(tk.Frame):
                 if guest not in actual_guests:
                     actual_guests.append(guest)
             for guest in actual_guests:
-                if guest[5] == "Greensboro" or guest[5] == "Summerfield" or guest[5] == "Oakridge" or guest[5] == "Browns summit" or guest[5] == "Stokesdale":
+                charged_zip_codes = [27455, 27214, 27358, 27357, 27310, 27410, 27408, 27405, 27401, 27403, 27409, 27235, 27282, 27406, 27301, 27249, 27377, 27283, 27313, 27320, 27260]
+                if int(guest[7]) in charged_zip_codes:
                     guest_cost += 8
             if guest_cost > 0:
                 # new popup window for guest cost
@@ -1022,7 +1023,7 @@ class AddGuest(tk.Frame):
             self.controller = controller
 
             message = tk.Label(self, text="", font=("Arial", 20), fg="red")
-            message.place(x=50, y=250)
+            message.place(x=50, y=300)
 
     
             def exit():
@@ -1035,7 +1036,7 @@ class AddGuest(tk.Frame):
                 except:
                     pass
                 # make sure all fields are filled out
-                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "":
+                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "" or zip_code.get() == "":
                     # display error message in red
                     message.config(text="Please fill out all fields.", fg="red")
                 else:
@@ -1065,7 +1066,7 @@ class AddGuest(tk.Frame):
                         # format guest info and write to guest.csv
                         ccity = city.get().lower().replace(' ', '')
                         ccity = ccity[0].upper() + ccity[1:]
-                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + ",0"
+                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + "," + zip_code.get() + ",0"
                         guest_info = guest_info
                         with open("logs/guests/guests.csv", "a") as f:
                             # write to new line
@@ -1084,7 +1085,7 @@ class AddGuest(tk.Frame):
                 except:
                     pass
                 # make sure all fields are filled out
-                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "":
+                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "" or zip_code.get() == "":
                     # display error message in red
                     message.config(text="Please fill out all fields.", fg="red")
                 else:
@@ -1114,7 +1115,7 @@ class AddGuest(tk.Frame):
                         # format guest info and write to guest.csv
                         ccity = city.get().lower().replace(' ', '')
                         ccity = ccity[0].upper() + ccity[1:]
-                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + ",0"
+                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + "," + zip_code.get() + ",0"
                         guest_info = guest_info
                         with open("logs/guests/guests.csv", "a") as f:
                             # write to new line
@@ -1129,6 +1130,7 @@ class AddGuest(tk.Frame):
                         address.delete(0, 'end')
                         city.delete(0, 'end')
                         state.set("North Carolina")
+                        zip_code.delete(0, 'end')
                         first_name.focus()
     
             # header
@@ -1179,6 +1181,12 @@ class AddGuest(tk.Frame):
             state_menu = tk.OptionMenu(self, state, "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming")
             state_menu.config(width=12, font=("Arial", 20))
             state_menu.place(x=525, y=195)
+
+            # field for zip code max 5 digits
+            zip_label = tk.Label(self, text="Zip:", font=("Arial", 20))
+            zip_label.place(x=375, y=250)
+            zip_code = tk.Entry(self, width=18, font=("Arial", 20))
+            zip_code.place(x=500, y=250)
 
             # submit button
             submit_button = tk.Button(self, text="Submit", font=("Arial", 20), command=addGuest)
