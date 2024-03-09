@@ -1,4 +1,8 @@
-.vs
 __pycache__
-.git
-.gitignore
+.vs
+.pytest_cache
+images
+venv
+needs_attention
+rename_things
+.DS_Store
