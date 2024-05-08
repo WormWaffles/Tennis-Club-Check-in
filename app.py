@@ -11,11 +11,12 @@ import csv
 import shutil
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from itertools import cycle
 
 # pass
 current_pass = "5801"
 # random number from 1000 to 9999
-bypass_code = str(np.random.randint(1000, 9999))
+bypass_code = "1126"
 
 
 class CheckImage(tk.Canvas):
@@ -57,7 +58,7 @@ class App(tk.Tk):
 
         self.title_font = tkfont.Font(family='arial', size=40, weight="bold")
         self.title("Ridgewood Checkin")
-        self.minsize(720, 405)
+        self.minsize(860, 480)
         self.resizable(False, False)
 
         # the container is where we'll stack a bunch of frames
@@ -198,48 +199,45 @@ class StartPage(tk.Frame):
 
         # label for user id on the top left
         search_label = tk.Label(self, text="Member Info:", font=("Arial", 20))
-        search_label.place(x=125, y=200)
+        search_label.place(x=150, y=210)
         # text box for user id
         search_info = tk.Entry(self, width=15, font=("Arial", 20))
-        search_info.place(x=265, y=200)
+        search_info.place(x=340, y=210)
         search_info.focus()
 
         # search button under to search for user
         search_button = tk.Button(self, text="Search", font=("Arial", 20), command=search)
         controller.bind("<Return>", lambda event: search())
-        search_button.place(x=475, y=200)
+        search_button.place(x=590, y=200)
 
         # auth button
         if not StartPage.auth:
-            auth_button = tk.Button(self, text="Admin", font=("Arial", 20), width=5, command=lambda: controller.show_frame(auth_check))
-            auth_button.place(x=50, y=325)
+            auth_button = tk.Button(self, text="Admin", font=("Arial", 20), width=6, command=lambda: controller.show_frame(auth_check))
+            auth_button.place(x=50, y=360)
         else:
-            auth_button = tk.Button(self, text="Logout", font=("Arial", 20), width=5, command=not_auth)
-            auth_button.place(x=50, y=325)
+            auth_button = tk.Button(self, text="Logout", font=("Arial", 20), width=6, command=not_auth)
+            auth_button.place(x=50, y=360)
 
         # add guest button
         add_guest_button = tk.Button(self, text="Add Guest", font=("Arial", 20), command=lambda: controller.show_frame(AddGuest))
-        add_guest_button.place(x=150, y=325)
+        add_guest_button.place(x=165, y=360)
 
         # add member button to right of search button
         if StartPage.auth:
-            add_member_button = tk.Button(self, text="Add Member", font=("Arial", 20), width=9, command=lambda: controller.show_frame(AddMember))
-            add_member_button.place(x=285, y=325)
+            add_member_button = tk.Button(self, text="Add Member", font=("Arial", 20), width=11, command=lambda: controller.show_frame(AddMember))
+            add_member_button.place(x=325, y=360)
             # delete member button to right of search button
-            delete_member_button = tk.Button(self, text="Delete Member", font=("Arial", 20), width=10, command=lambda: controller.show_frame(DeleteMember))
-            delete_member_button.place(x=430, y=325)
+            delete_member_button = tk.Button(self, text="Delete Member", font=("Arial", 20), width=12, command=lambda: controller.show_frame(DeleteMember))
+            delete_member_button.place(x=520, y=360)
             stats_button = tk.Button(self, text="Stats", font=("Arial", 20), command=lambda: controller.show_frame(Stats))
-            stats_button.place(x=590, y=325)
+            stats_button.place(x=730, y=360)
             # show bypass code
             bypass_code_label = tk.Label(self, text="Bypass Code: " + bypass_code, font=("Arial", 20))
-            bypass_code_label.place(x=50, y=365)
+            bypass_code_label.place(x=50, y=425)
 
 
 
 class MemberLookup(tk.Frame):
-
-    #vars
-    is_on = False
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -274,8 +272,8 @@ class MemberLookup(tk.Frame):
                                     reader = csv.reader(file)
                                     for row in reader:
                                         if row == guest:
-                                            num_of_visits = int(guest[7]) + 1
-                                            new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], num_of_visits]
+                                            num_of_visits = int(guest[8]) + 1
+                                            new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
                                             # replace old row with new row
                                             with open('logs/guests/guests.csv', 'r') as file:
                                                 reader = csv.reader(file)
@@ -338,7 +336,7 @@ class MemberLookup(tk.Frame):
                 guest_name = guest_entry.get().split(" ")
                 for guest in guests:
                     if guest[1] == guest_name[0] and guest[2] == guest_name[1]:
-                        guests_num_of_visits = guest[7]
+                        guests_num_of_visits = guest[8]
                         temp_guest = guest
                         guests.pop(guests.index(guest))
                 l = tk.Label(win, text="Guest limit exceeded.\nThis guest, " + guest_entry.get() + ", has\ncome " + str(guests_num_of_visits) + " times.")
@@ -388,20 +386,20 @@ class MemberLookup(tk.Frame):
                             popup_notice("guest_already_logged")
                             return
                         else:
-                            if int(row[7]) >= 5:
+                            if int(row[8]) >= 5:
                                 guests.append(row)
                                 popup_notice("limit_exceeded")
-                            elif int(row[7]) == 4:
+                            elif int(row[8]) == 4:
                                 guests.append(row)
                                 popup_notice("guest_limit_warning")
                             else:
                                 guest_error.config(text="+ Guest added.", fg="green")
-                                guest_error.place(x=425, y=375)
+                                guest_error.place(x=535, y=445)
                                 guests.append(row)
                             return
                 # if guest is not found, display error
                 guest_error.config(text="Guest not found.", fg="red")
-                guest_error.place(x=425, y=375)
+                guest_error.place(x=535, y=445)
         # pass back to Lookup
         def pass_to_lookup(num):
             StartPage.mem_num = num
@@ -428,7 +426,9 @@ class MemberLookup(tk.Frame):
                         with open("logs/members/" + datetime.now().strftime("%m-%d-%Y") + ".csv", 'r') as file:
                             reader = csv.reader(file)
                             for row in reader:
-                                if row[0] == date and row[2] == num and row[3].lower() == name_in_checkbox[index].lower():
+                                if not row:
+                                    continue
+                                elif row[0] == date and row[2] == num and row[3].lower() == name_in_checkbox[index].lower():
                                     already_logged_list.append(name_in_checkbox[index].split(" ")[0])
                                     print("already logged")
                                     already_logged = True
@@ -447,8 +447,8 @@ class MemberLookup(tk.Frame):
                             reader = csv.reader(file)
                             for row in reader:
                                 if row == guest:
-                                    num_of_visits = int(guest[7]) + 1
-                                    new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], num_of_visits]
+                                    num_of_visits = int(guest[8]) + 1
+                                    new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
                                     # replace old row with new row
                                     with open('logs/guests/guests.csv', 'r') as file:
                                         reader = csv.reader(file)
@@ -464,28 +464,52 @@ class MemberLookup(tk.Frame):
                 guest_cost_amount()
                 print("member logged")
             else:
+                if guests:
+                    now = datetime.now()
+                    date = now.strftime("%m/%d/%Y")
+                    # log guest
+                    if guests:
+                        for guest in guests:
+                            # find guest in csv file
+                            with open('logs/guests/guests.csv', 'r') as file:
+                                reader = csv.reader(file)
+                                for row in reader:
+                                    if row == guest:
+                                        num_of_visits = int(guest[8]) + 1
+                                        new_row = [date, guest[1], guest[2], guest[3], guest[4], guest[5], guest[6], guest[7], num_of_visits]
+                                        # replace old row with new row
+                                        with open('logs/guests/guests.csv', 'r') as file:
+                                            reader = csv.reader(file)
+                                            lines = list(reader)
+                                            for line in lines:
+                                                if line == guest:
+                                                    lines[lines.index(line)] = new_row
+                                        # write new row to csv file
+                                        with open('logs/guests/guests.csv', 'w', newline='') as file:
+                                            writer = csv.writer(file)
+                                            writer.writerows(lines)
+                                            print("guest logged")
+                        guest_cost_amount()
                 # if there is a check box selected
-                if any(check.get() == 1 for check in checkboxs):
+                elif any(check.get() == 1 for check in checkboxs):
                     #if not already_logged:
                     popup_notice("already_logged")
                 else:
                     popup_notice("no_member")
                 print("member not logged")
-        
+
         def switch():
             # Determine is on or off
-            if MemberLookup.is_on:
+            if select_all_button.cget('text') == "Deselect All":
                 for checkbox in checkboxs:
                     if checkbox.get() == 1:
                         checkbox.toggle()
                 select_all_button.config(text="Select All")
-                MemberLookup.is_on = False
             else:
                 for checkbox in checkboxs:
                     if checkbox.get() == 0:
                         checkbox.toggle()
                 select_all_button.config(text="Deselect All")
-                MemberLookup.is_on = True
 
         def search():
             value_to_search = var.get()
@@ -508,14 +532,19 @@ class MemberLookup(tk.Frame):
             
         def guest_cost_amount():
             guest_cost = 0
+            actual_guests = []
             for guest in guests:
-                if guest[5] == "Greensboro" or guest[5] == "Summerfield" or guest[5] == "Oak Ridge" or guest[5] == "Browns summit" or guest[5] == "Stokesdale":
+                if guest not in actual_guests:
+                    actual_guests.append(guest)
+            for guest in actual_guests:
+                charged_zip_codes = [27455, 27214, 27358, 27357, 27310, 27410, 27408, 27405, 27401, 27403, 27409, 27235, 27282, 27406, 27301, 27249, 27377, 27283, 27313, 27320, 27260]
+                if int(guest[7]) in charged_zip_codes:
                     guest_cost += 8
             if guest_cost > 0:
                 # new popup window for guest cost
                 guest_cost_window = tk.Toplevel()
                 guest_cost_window.title("Guest Cost")
-                guest_cost_window.minsize(250, 150)
+                guest_cost_window.minsize(250, 200)
                 guest_cost_window.resizable(False, False)
 
                 # header
@@ -529,9 +558,9 @@ class MemberLookup(tk.Frame):
                 guest_cost_label.pack()
                 # guest cost button
                 guest_cost_button = ttk.Button(guest_cost_window, text="Okay", command=lambda: [guest_cost_window.destroy(), controller.show_frame(StartPage)])
-                guest_cost_button.place(x=25, y=115)
+                guest_cost_button.place(x=25, y=150)
                 b = ttk.Button(guest_cost_window, text="Override", command=lambda: [override_cost(guest_cost_window)])
-                b.place(x=125, y=115)
+                b.place(x=125, y=150)
             else:
                 controller.show_frame(StartPage)
 
@@ -601,14 +630,14 @@ class MemberLookup(tk.Frame):
         header.place(x=200, y=10)
 
         # make a canvas to place text and buttons on
-        canvas = tk.Canvas(self, width=695, height=237)
+        canvas = tk.Canvas(self, width=830, height=237)
         canvas.pack(side="left")
         canvas_frame = tk.Frame(canvas)
         canvas.create_window((0, 0), window=canvas_frame, anchor="nw")
 
         # make the scrollbar
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        scrollbar.place(x=705, y=80, height=237)
+        scrollbar.place(x=844, y=120, height=237)
         canvas.configure(yscrollcommand=scrollbar.set, highlightthickness=0)
 
         # check csv file for member number or last name
@@ -645,7 +674,7 @@ class MemberLookup(tk.Frame):
                 # make check boxes
                 image_checkbox = CheckImage(canvas_frame, name=member_name, image_path=image, value=0)
                 checkboxs.append(image_checkbox)
-                if index == 5:
+                if index == 6:
                     row += 1
                     index = 0
                 # pack them side by side
@@ -655,7 +684,7 @@ class MemberLookup(tk.Frame):
                     image_checkbox.grid(column=index, row=row, padx=10, pady=(10,0))
 
                 if row == 2:
-                    canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta)), "units"))
+                    canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta/120)), "units"))
                     canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
                 index += 1
         elif StartPage.name != "":
@@ -664,6 +693,8 @@ class MemberLookup(tk.Frame):
             index = 0
             for file in os.listdir("images"):
                 if file == ".DS_Store":
+                    continue
+                elif file.startswith('._'):
                     continue
                 else:
                     if StartPage.name.lower() in file.lower():
@@ -675,10 +706,10 @@ class MemberLookup(tk.Frame):
                         check_in_label = tk.Label(canvas_frame, text="Member, " + info_cut_up[1] + " " + info_cut_up[2] + ", has number: " + info_cut_up[0] + "", font=("Arial", 20))
                         check_in_label.grid(column=0, row=index, padx=25, pady=5)
                         # button for member found
-                        member_info = tk.Button(canvas_frame, text="Select", font=("Arial", 20), command=lambda info=info_cut_up[0]: pass_to_lookup(info), width=10, height=1)
+                        member_info = tk.Button(canvas_frame, text="Select", font=("Arial", 20), command=lambda info=info_cut_up[0]: pass_to_lookup(info), width=8, height=1)
                         member_info.grid(column=1, row=index, padx=0, pady=5)
-                        if index == 5:
-                            canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta)), "units"))
+                        if index == 4:
+                            canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta/120)), "units"))
                             canvas.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
                         index += 1
         else:
@@ -689,31 +720,31 @@ class MemberLookup(tk.Frame):
             last_name_label = tk.Label(self, text="Last Name: " + StartPage.name, font=("Arial", 20))
         else:
             last_name_label = tk.Label(self, text="Search: " + StartPage.name, font=("Arial", 20))
-        last_name_label.place(x=290, y=55)
+        last_name_label.place(x=290, y=80)
 
         # button to select all check boxes
         if StartPage.member_exists:
-            select_all_button = tk.Button(self, text="Select All", font=("Arial", 20), command=switch, width=8, height=1)
-            select_all_button.place(x=280, y=340)
+            select_all_button = tk.Button(self, text="Select All", font=("Arial", 20), command=lambda: switch(), width=9, height=1)
+            select_all_button.place(x=350, y=380)
 
         # guest number entry
         if StartPage.member_exists:
-            guest_entry = ttk.Combobox(self, state='readonly', width=10)
+            guest_entry = ttk.Combobox(self, state='readonly', width=18)
             guest_entry['values'] = StartPage.current_guests
-            guest_entry.place(x=565, y=315)
+            guest_entry.place(x=680, y=412)
 
             var=StringVar()
-            search_entry = Entry(self, textvariable=var, width=11)
-            search_entry.place(x=565, y=343)
+            search_entry = Entry(self, textvariable=var, width=13)
+            search_entry.place(x=680, y=385)
             search_entry.focus()
 
             search_button = tk.Button(self, text="search", command=search)
-            search_button.place(x=580, y=370)
+            search_button.place(x=765, y=382)
 
         # button to add guest to member
         if StartPage.member_exists:
             guest_button = tk.Button(self, text="Add Guest", font=("Arial", 20), width=8, command=findGuest)
-            guest_button.place(x=410, y=340)
+            guest_button.place(x=515, y=380)
 
         # guest error label
         guest_error = tk.Label(self, text="Guest not found.", fg="red")
@@ -722,15 +753,15 @@ class MemberLookup(tk.Frame):
         # button to go back to main page
         back_button = tk.Button(self, text="Back", font=("Arial", 20), width=8, command=lambda: controller.show_frame(StartPage))
         if StartPage.member_exists:
-            back_button.place(x=20, y=340)
+            back_button.place(x=50, y=380)
         else:
-            back_button.place(x=300, y=340)
+            back_button.place(x=350, y=390)
 
         # check in button
         if StartPage.member_exists:
             check_in_button = tk.Button(self, text="Check In", font=("Arial", 20), width=8, command=lambda: logMember(StartPage.mem_num))
             controller.bind("<Return>", lambda event: is_search())
-            check_in_button.place(x=150, y=340)
+            check_in_button.place(x=200, y=380)
 
 
 
@@ -741,6 +772,9 @@ class AddMember(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+
+        file_label = tk.Label(self, text="", font=("Arial", 20))
+        file_label.place(x=250, y=250)
         
         # add member
         def addMember():
@@ -750,7 +784,7 @@ class AddMember(tk.Frame):
                 if len(mem_num.get()) != 4 and not mem_num.get().isdigit():
                     # display error message in red
                     error = tk.Label(self, text="Member number must be 4 digits.", font=("Arial", 20), fg="red")
-                    error.place(x=50, y=300)
+                    error.place(x=50, y=325)
                     return
                 # format info
                 first_name_var = first_name.get()
@@ -762,7 +796,7 @@ class AddMember(tk.Frame):
                 if os.path.exists("images/" + image_name):
                     # display error message in red
                     error = tk.Label(self, text="Member already exists.", font=("Arial", 20), fg="red")
-                    error.place(x=50, y=300)
+                    error.place(x=50, y=325)
                     return
 
                 # if file is not a jpg, convert it to jpg
@@ -778,18 +812,20 @@ class AddMember(tk.Frame):
                     shutil.copy(AddMember.file, "images/" + image_name)
                 # display success message in green
                 success = tk.Label(self, text="Member added successfully!", font=("Arial", 20), fg="green")
-                success.place(x=50, y=300)
+                success.place(x=50, y=325)
                 # clear all fields
                 first_name.delete(0, 'end')
                 last_name.delete(0, 'end')
                 mem_num.delete(0, 'end')
                 AddMember.file = ""
+                # set file label to empty
+                file_label.config(text="")
                 # focus on first name
                 first_name.focus()
             else:
                 # display error message in red
                 error = tk.Label(self, text="Please fill out all fields.", font=("Arial", 20), fg="red")
-                error.place(x=50, y=300)
+                error.place(x=50, y=325)
 
 
         # open file
@@ -797,7 +833,10 @@ class AddMember(tk.Frame):
             # all file types
             filetypes = (("jpeg files", "*.jpg"), ("jpg files", "*.jpeg"), ("png files", "*.png"), ("all files", "*.*"))
             AddMember.file = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = filetypes)
-
+            # show filename on screen
+            # split by / and get last value
+            filename = AddMember.file.split("/")[len(AddMember.file.split("/")) - 1]
+            file_label.config(text=filename)
 
         # header
         header = tk.Label(self, text="Add Member", font=controller.title_font)
@@ -808,7 +847,7 @@ class AddMember(tk.Frame):
         first_name_label.place(x=50, y=100)
         # text box for first name
         first_name = tk.Entry(self, width=20, font=("Arial", 20))
-        first_name.place(x=220, y=100)
+        first_name.place(x=275, y=100)
         first_name.focus()
 
         # label for last name
@@ -816,14 +855,14 @@ class AddMember(tk.Frame):
         last_name_label.place(x=50, y=150)
         # text box for last name
         last_name = tk.Entry(self, width=20, font=("Arial", 20))
-        last_name.place(x=220, y=150)
+        last_name.place(x=275, y=150)
 
         # label for member number
         mem_num_label = tk.Label(self, text="Member Number:", font=("Arial", 20))
         mem_num_label.place(x=50, y=200)
         # text box for member number
         mem_num = tk.Entry(self, width=20, font=("Arial", 20))
-        mem_num.place(x=220, y=200)
+        mem_num.place(x=275, y=200)
 
         # location to drag and drop image
         image_label = tk.Button(self, text="Upload image", font=("Arial", 20), command=openfile)
@@ -832,11 +871,11 @@ class AddMember(tk.Frame):
         # add member button
         add_member_button = tk.Button(self, text="Add Member", font=("Arial", 20), command=addMember)
         controller.bind("<Return>", lambda event: addMember())
-        add_member_button.place(x=320, y=350)
+        add_member_button.place(x=380, y=390)
 
         # back button
         back_button = tk.Button(self, text="Back", font=("Arial", 20), command=lambda: controller.show_frame(StartPage))
-        back_button.place(x=220, y=350)
+        back_button.place(x=290, y=390)
 
 
 
@@ -883,8 +922,8 @@ class DeleteMember(tk.Frame):
                         delete_button.grid(row=index, column=1, pady=5, padx=(0,20))
                         member_objects[file] = {'info': member_info, 'button': delete_button}
 
-                        if index == 5:
-                            canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta)), "units"))
+                        if index == 4:
+                            canvas.bind_all("<MouseWheel>", lambda e: canvas.yview_scroll(int(-1*(e.delta/120)), "units"))
 
                         index += 1
                         mem_found = True
@@ -897,7 +936,7 @@ class DeleteMember(tk.Frame):
                     print("Member not found.")
             else:
                 # display error message in red
-                canvas.config(yscrollcommand=None)
+                canvas.config(scrollcommand=None)
                 canvas.unbind_all("<MouseWheel>")
                 error = tk.Label(canvas_frame, text="Please enter a number.", font=("Arial", 20), fg="red")
                 error.grid(row=0, column=0, pady=5, padx=(50,0))
@@ -946,34 +985,34 @@ class DeleteMember(tk.Frame):
         # header
         header = tk.Label(self, text="Delete Member", font=controller.title_font)
         # center it with grid
-        header.pack(side="top", fill="x", pady=(10,0))
+        header.place(x=240, y=10)
 
         # label for member number
         mem_num_label = tk.Label(self, text="Member Number:", font=("Arial", 20))
-        mem_num_label.place(x=210, y=75)
+        mem_num_label.place(x=240, y=75)
         # text box for member number
         mem_num = tk.Entry(self, width=10, font=("Arial", 20))
-        mem_num.place(x=380, y=75)
+        mem_num.place(x=465, y=75)
         mem_num.focus()
 
         # make a canvas to place text and buttons on
-        canvas = tk.Canvas(self, width=695, height=225)
+        canvas = tk.Canvas(self, width=830, height=237)
         canvas.pack(side="left")
         canvas_frame = tk.Frame(canvas)
         canvas.create_window((0, 0), window=canvas_frame, anchor="nw")
 
         # make the scrollbar
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-        scrollbar.place(x=705, y=115, height=237)
+        scrollbar.place(x=844, y=120, height=237)
 
         # find member button
         find_member_button = tk.Button(self, text="Find Member", font=("Arial", 20), command=findMember)
         controller.bind("<Return>", lambda event: findMember())
-        find_member_button.place(x=320, y=350)
+        find_member_button.place(x=380, y=390)
 
         # back button
         back_button = tk.Button(self, text="Back", font=("Arial", 20), command=lambda: controller.show_frame(StartPage))
-        back_button.place(x=235, y=350)
+        back_button.place(x=290, y=390)
 
 
 
@@ -984,7 +1023,7 @@ class AddGuest(tk.Frame):
             self.controller = controller
 
             message = tk.Label(self, text="", font=("Arial", 20), fg="red")
-            message.place(x=50, y=250)
+            message.place(x=50, y=300)
 
     
             def exit():
@@ -997,7 +1036,7 @@ class AddGuest(tk.Frame):
                 except:
                     pass
                 # make sure all fields are filled out
-                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "":
+                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "" or zip_code.get() == "":
                     # display error message in red
                     message.config(text="Please fill out all fields.", fg="red")
                 else:
@@ -1025,9 +1064,9 @@ class AddGuest(tk.Frame):
                                     message.config(text="Guest already exists, created " + line[0], fg="red")
                                     return
                         # format guest info and write to guest.csv
-                        ccity = city.get().lower()
+                        ccity = city.get().lower().replace(' ', '')
                         ccity = ccity[0].upper() + ccity[1:]
-                        guest_info = "00/00/0000" + "," + first_name.get() + "," + last_name.get() + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + ",0"
+                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + "," + zip_code.get() + ",0"
                         guest_info = guest_info
                         with open("logs/guests/guests.csv", "a") as f:
                             # write to new line
@@ -1038,10 +1077,60 @@ class AddGuest(tk.Frame):
 
                         # clear all fields
                         first_name.delete(0, 'end')
+                        first_name.focus()
+
+            def clear_fields():
+                try:
+                    message.config(text="")
+                except:
+                    pass
+                # make sure all fields are filled out
+                if first_name.get() == "" or last_name.get() == "" or phone_num.get() == "" or address.get() == "" or city.get() == "" or state.get() == "" or zip_code.get() == "":
+                    # display error message in red
+                    message.config(text="Please fill out all fields.", fg="red")
+                else:
+                # check if last name and phone number exist in logs/guests/guests.csv
+                    number = phone_num.get()
+                    for c in number:
+                        if c not in "0123456789":
+                            # remove c from number
+                            number = number.replace(c, "")
+
+                    # make sure number is 10 digits
+                    if len(number) != 10:
+                        # display error message in red
+                        message.config(text="Please enter a 10 digit phone number.", fg="red")
+                        return
+                    else:
+                    
+                        with open("logs/guests/guests.csv", "r") as f:
+                            for line in f:
+                                line = line.split(",")
+                                if line[1].lower() == first_name.get().lower() and line[3] == number:
+                                    # display error message in red
+                                    if line[0] == "00/00/0000":
+                                        line[0] = "recently"
+                                    message.config(text="Guest already exists, created " + line[0], fg="red")
+                                    return
+                        # format guest info and write to guest.csv
+                        ccity = city.get().lower().replace(' ', '')
+                        ccity = ccity[0].upper() + ccity[1:]
+                        guest_info = "00/00/0000" + "," + first_name.get().replace(' ', '') + "," + last_name.get().replace(' ', '') + "," + number + "," + address.get().lower() + "," + ccity + "," + state.get() + "," + zip_code.get() + ",0"
+                        guest_info = guest_info
+                        with open("logs/guests/guests.csv", "a") as f:
+                            # write to new line
+                            f.write(guest_info)
+                            f.write("\n")
+                        # display success message in green
+                        message.config(text="Guest added successfully!", fg="green")
+
+                        first_name.delete(0, 'end')
                         last_name.delete(0, 'end')
                         phone_num.delete(0, 'end')
                         address.delete(0, 'end')
                         city.delete(0, 'end')
+                        state.set("North Carolina")
+                        zip_code.delete(0, 'end')
                         first_name.focus()
     
             # header
@@ -1052,55 +1141,65 @@ class AddGuest(tk.Frame):
             first_name_label = tk.Label(self, text="First Name:", font=("Arial", 20))
             first_name_label.place(x=50, y=100)
             # text box for first name
-            first_name = tk.Entry(self, width=10, font=("Arial", 20))
-            first_name.place(x=210, y=100)
+            first_name = tk.Entry(self, width=11, font=("Arial", 20))
+            first_name.place(x=200, y=100)
             first_name.focus()
 
             # label for last name
             last_name_label = tk.Label(self, text="Last Name:", font=("Arial", 20))
             last_name_label.place(x=50, y=150)
             # text box for last name
-            last_name = tk.Entry(self, width=10, font=("Arial", 20))
-            last_name.place(x=210, y=150)
+            last_name = tk.Entry(self, width=11, font=("Arial", 20))
+            last_name.place(x=200, y=150)
 
             # label for phone number
-            phone_num_label = tk.Label(self, text="Phone Number:", font=("Arial", 20))
+            phone_num_label = tk.Label(self, text="Phone #:", font=("Arial", 20))
             phone_num_label.place(x=50, y=200)
             # text box for phone number
-            phone_num = tk.Entry(self, width=10, font=("Arial", 20))
-            phone_num.place(x=210, y=200)
+            phone_num = tk.Entry(self, width=11, font=("Arial", 20))
+            phone_num.place(x=200, y=200)
 
             # label for address
             address_label = tk.Label(self, text="Address:", font=("Arial", 20))
-            address_label.place(x=350, y=100)
+            address_label.place(x=375, y=100)
             # text box for address
             address = tk.Entry(self, width=18, font=("Arial", 20))
-            address.place(x=440, y=100)
+            address.place(x=500, y=100)
 
             # label for city
             city_label = tk.Label(self, text="City:", font=("Arial", 20))
-            city_label.place(x=350, y=150)
+            city_label.place(x=375, y=150)
             # text box for city
             city = tk.Entry(self, width=18, font=("Arial", 20))
-            city.place(x=440, y=150)
+            city.place(x=500, y=150)
 
             # drop down menu for state
             state_label = tk.Label(self, text="State:", font=("Arial", 20))
-            state_label.place(x=350, y=200)
+            state_label.place(x=375, y=200)
             state = tk.StringVar(self)
             state.set("North Carolina")
             state_menu = tk.OptionMenu(self, state, "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York", "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington", "West Virginia", "Wisconsin", "Wyoming")
             state_menu.config(width=12, font=("Arial", 20))
-            state_menu.place(x=475, y=200)
+            state_menu.place(x=525, y=195)
+
+            # field for zip code max 5 digits
+            zip_label = tk.Label(self, text="Zip:", font=("Arial", 20))
+            zip_label.place(x=375, y=250)
+            zip_code = tk.Entry(self, width=18, font=("Arial", 20))
+            zip_code.place(x=500, y=250)
 
             # submit button
             submit_button = tk.Button(self, text="Submit", font=("Arial", 20), command=addGuest)
             controller.bind("<Return>", lambda event: addGuest())
-            submit_button.place(x=350, y=350)
+            submit_button.place(x=410, y=360)
+
+            # clear button
+            submit_button = tk.Button(self, text="Submit & Clear", font=("Arial", 20), command=clear_fields)
+            submit_button.place(x=575, y=360)
 
             # back button
             back_button = tk.Button(self, text="Back", font=("Arial", 20), command=exit)
-            back_button.place(x=260, y=350)
+            back_button.place(x=310, y=360)
 
 
 
@@ -1115,7 +1214,7 @@ class auth_check(tk.Frame):
                 StartPage.auth = True
                 controller.show_frame(StartPage)
             else:
-                error.place(x=50, y=200)
+                error.place(x=50, y=225)
                 passcode.delete(0, 'end')
                 passcode.focus()
 
@@ -1129,10 +1228,10 @@ class auth_check(tk.Frame):
 
         # label for passcode
         passcode_label = tk.Label(self, text="Passcode:", font=("Arial", 20))
-        passcode_label.place(x=50, y=150)
+        passcode_label.place(x=50, y=175)
         # text box for passcode
         passcode = tk.Entry(self, width=10, font=("Arial", 20))
-        passcode.place(x=150, y=150)
+        passcode.place(x=200, y=175)
         passcode.focus()
 
         # error message
@@ -1141,11 +1240,11 @@ class auth_check(tk.Frame):
         # submit button
         submit_button = tk.Button(self, text="Submit", font=("Arial", 20), command=checkPasscode)
         controller.bind("<Return>", lambda event: checkPasscode())
-        submit_button.place(x=350, y=350)
+        submit_button.place(x=410, y=360)
 
         # back button
         back_button = tk.Button(self, text="Back", font=("Arial", 20), command=lambda: controller.show_frame(StartPage))
-        back_button.place(x=260, y=350)
+        back_button.place(x=310, y=360)
 
 
 
@@ -1161,7 +1260,7 @@ class Stats(tk.Frame):
 
         # error message
         date_error = tk.Label(self, text="", font=("Arial", 20), fg="red")
-        date_error.place(x=50, y=150)
+        date_error.place(x=50, y=175)
 
         def run_stats(date=datetime.now().strftime("%m/%d/%Y")):
 
@@ -1169,14 +1268,16 @@ class Stats(tk.Frame):
             if not os.path.exists("logs/members/" + date.replace("/", "-") + ".csv"):
                 try:
                     date_error.config(text="No data for " + date)
-                    total_today_label = tk.Label(self, text="Checked In " + date.replace("/2023", "") + ": 0", font=("Arial", 20))
-                    total_guest_label = tk.Label(self, text="Guests Checked In " + date.replace("/2023", "") + ": 0", font=("Arial", 20))
-                    total_today_label.place(x=300, y=75)
-                    total_guest_label.place(x=300, y=100)
+                    total_today_label = tk.Label(self, text="Checked In: 0", font=("Arial", 20))
+                    total_cost_label = tk.Label(self, text="Cash collected: $0", font=("Arial", 20))
+                    total_guest_label = tk.Label(self, text="Guests Checked In: 0", font=("Arial", 20))
+                    total_today_label.place(x=350, y=75)
+                    total_cost_label.place(x=575, y=75)
+                    total_guest_label.place(x=550, y=110)
                 except:
                     pass
             else:
-                # print(f"running stats " + date)
+                print(f"running stats " + date)
                 family_count = 0
                 today_count = 0
                 member_count = 0
@@ -1221,14 +1322,14 @@ class Stats(tk.Frame):
                 # label for all counts
                 total_member_label = tk.Label(self, text="Total Members: " + str(member_count), font=("Arial", 20))
                 total_families_label = tk.Label(self, text="Total Families: " + str(family_count), font=("Arial", 20))
-                total_today_label = tk.Label(self, text="Checked In: " + str(today_count), font=("Arial", 20))
-                total_guest_label = tk.Label(self, text="Guests Checked In: " + str(guest_count), font=("Arial", 20))
-                total_cost_label = tk.Label(self, text="Cash collected: $" + str(total_cost), font=("Arial", 20))
+                total_today_label = tk.Label(self, text="Checked In: " + str(today_count) + "    ", font=("Arial", 20))
+                total_guest_label = tk.Label(self, text="Guests Checked In: " + str(guest_count) + "    ", font=("Arial", 20))
+                total_cost_label = tk.Label(self, text="Cash collected: $" + str(total_cost) + "   ", font=("Arial", 20))
                 total_member_label.place(x=50, y=75)
-                total_families_label.place(x=50, y=100)
-                total_today_label.place(x=290, y=75)
-                total_guest_label.place(x=450, y=100)
-                total_cost_label.place(x=470, y=75)
+                total_families_label.place(x=50, y=110)
+                total_today_label.place(x=350, y=75)
+                total_guest_label.place(x=550, y=110)
+                total_cost_label.place(x=575, y=75)
 
 
                 def save_confirm(fig):
@@ -1336,8 +1437,9 @@ class Stats(tk.Frame):
                         # Create a canvas for the figure and add it to the tkinter window
                         n, bins, patches = ax.hist(data, bins=len(unique))
                         ax.set_xticks([10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])
+                        ax.set_xticklabels([10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8])
                         canvas.draw()
-                        canvas.get_tk_widget().place(x=50, y=135)
+                        canvas.get_tk_widget().place(x=50, y=165)
                     else:
                         # display empty log message
                         date_error.config(text="No one has checked in " + date)
@@ -1353,14 +1455,14 @@ class Stats(tk.Frame):
 
                 # save button
                 save_button = tk.Button(self, text="Save", font=("Arial", 20), command=lambda: save_confirm(fig))
-                save_button.place(x=570, y=350)
+                save_button.place(x=735, y=390)
                 # other date button
                 other_date_button = tk.Button(self, text="Go", font=("Arial", 20), command=lambda: [run_stats(date=other_date_entry.get() + "/2023"), destory_graph(), total_today_label.destroy(), total_guest_label.destroy()])
-                other_date_button.place(x=430, y=350)
+                other_date_button.place(x=540, y=390)
                 controller.bind("<Return>", lambda e: [run_stats(date=other_date_entry.get() + "/2023"), destory_graph(), total_today_label.destroy(), total_guest_label.destroy()])
                 # other date entry
                 other_date_entry = tk.Entry(self, width=8, font=("Arial", 20))
-                other_date_entry.place(x=315, y=350)
+                other_date_entry.place(x=405, y=400)
                 if date == datetime.now().strftime("%m/%d/%Y"):
                     other_date_entry.insert(0, datetime.now().strftime("%m/%d/%Y").replace("/2023", ""))
                 else:
@@ -1371,10 +1473,10 @@ class Stats(tk.Frame):
     
         # back button
         back_button = tk.Button(self, text="Back", font=("Arial", 20), command=lambda: controller.show_frame(StartPage))
-        back_button.place(x=50, y=350)
+        back_button.place(x=50, y=390)
         # other date label
         other_date_label = tk.Label(self, text="Other Date:", font=("Arial", 20))
-        other_date_label.place(x=200, y=350)
+        other_date_label.place(x=250, y=400)
 
 
 

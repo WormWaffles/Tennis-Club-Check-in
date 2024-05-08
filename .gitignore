@@ -1,6 +1,7 @@
 __pycache__
+.vs
 .pytest_cache
-/images
+images
 venv
 needs_attention
 rename_things
