@@ -1315,8 +1315,9 @@ class Stats(tk.Frame):
                     for line in guest:
                         line = line.split(",")
                         if line[0] == date:
-                            if line[5] == "Greensboro" or line[5] == "Summerfield" or line[5] == "Oak Ridge" or line[5] == "Browns summit" or line[5] == "Stokesdale":
-                                if len(line) == 8:
+                            charged_zip_codes = [27455, 27214, 27358, 27357, 27310, 27410, 27408, 27405, 27401, 27403, 27409, 27235, 27282, 27406, 27301, 27249, 27377, 27283, 27313, 27320, 27260]
+                            if int(line[7]) in charged_zip_codes:
+                                if len(line) == 9:
                                     total_cost += 8
 
                 # label for all counts
