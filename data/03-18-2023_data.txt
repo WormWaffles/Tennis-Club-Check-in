@@ -1,6 +1,0 @@
-Weather: 
-Checmicals: ph: , cl: , al: 
-Comment: 
-Members Checked In: 21
-Guests Checked In: 2
-Cash Collected: $8
